@@ -1,10 +1,21 @@
 import random
 import os
+import logo
+import hangman_ascii
+
+def welcome():
+    print(logo.hangman_logo)
+    print(("""
+    ***********************
+    WELCOME TO HANGMAN GAME
+    ***********************
+    """))
+    input("Press enter to start...")
 
 words_bank = ["table", "windows", "laptop", "screen", "python", "mobile", "mouse", "keyboard", "water", "country"]
 spaces = ["-"]
 letter_guessed  = []
-lives = 6
+
 # Create Clear Function
 def clear():
     os.system("cls" if os.name == "nt" else "clear")
@@ -28,32 +39,54 @@ def replace_space(letter_index, answer, user_guess):
     return answer
 
 # game logic:
-word_to_guess = peck_word(words_bank)
-print(word_to_guess)
-word_as_spaces = empty_spaces(word_to_guess)
+def start_game():
 
-while "-" in word_as_spaces:
+    lives = 7
+    word_to_guess = peck_word(words_bank)
+    word_as_spaces = empty_spaces(word_to_guess)
 
-    print("".join(word_as_spaces))
-    guess = input("Guess a letter: ").lower()
-    if lives > 0 :
-        if guess in word_to_guess:
-            index = guess_letter(guess, word_to_guess)
-            replace_space(index, word_as_spaces, guess)
+    while "-" in word_as_spaces:
 
-        elif guess in letter_guessed:
-            print("You already guessed this letter, Try another one")
-            print(f"You have {lives} remaining")
+        print("".join(word_as_spaces))
+        guess = input("Guess a letter: ").lower()
+        clear()
+        if lives > 0 :
+            if guess in word_to_guess:
+                index = guess_letter(guess, word_to_guess)
+                replace_space(index, word_as_spaces, guess)
 
+            elif guess in letter_guessed:
+                print("You already guessed this letter, Try another one")
+                print(f"You have {lives} remaining")
+
+            else:
+                print(hangman_ascii.characters[7-lives])
+                lives -= 1
+                letter_guessed.append(guess)
+                print(f"You have {lives} remaining")
         else:
-            lives -= 1
-            letter_guessed.append(guess)
-            print(f"You have {lives} remaining")
-    else:
-        break
+            break
 
-if lives > 0:
-    print("You win")
+    if lives > 0:
+        print("""
+        #########
+         YOU WIN
+        #########
+        """)
+    else:
+        print(hangman_ascii.characters[7])
+        print("""
+            ##########
+             YOU LOSE
+            ##########
+            """)
+
+welcome()
+start_game()
+
+if input("Play again? (Y/N) ").lower() == "y":
+    start_game()
 else:
-    print("You lose")
+    print("Bye Bye...")
+
 
